@@ -1,0 +1,87 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@theme inline {
+  --color-background: var(--background);
+
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-geist-sans);
+
+  --font-mono: var(--font-geist-mono);
+}
+
+.hover\:bg-accent:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 117 190 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-primary\/90:hover{
+  background-color: rgb(255 204 0 / 0.9);
+}
+
+.hover\:bg-secondary\/80:hover{
+  background-color: rgb(204 0 0 / 0.8);
+}
+
+.hover\:text-accent-foreground:hover{
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.hover\:underline:hover{
+  text-decoration-line: underline;
+}
+
+.focus-visible\:outline-none:focus-visible{
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus-visible\:ring-1:focus-visible{
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.focus-visible\:ring-ring:focus-visible{
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(255 215 0 / var(--tw-ring-opacity));
+}
+
+.disabled\:pointer-events-none:disabled{
+  pointer-events: none;
+}
+
+.disabled\:opacity-50:disabled{
+  opacity: 0.5;
+}
+
+@media (min-width: 768px){
+  .md\:w-1\/2{
+    width: 50%;
+  }
+
+  .md\:grid-cols-4{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .md\:flex-row{
+    flex-direction: row;
+  }
+
+  .md\:text-left{
+    text-align: left;
+  }
+}
+
+.\[\&_svg\]\:pointer-events-none svg{
+  pointer-events: none;
+}
+
+.\[\&_svg\]\:shrink-0 svg{
+  flex-shrink: 0;
+}
