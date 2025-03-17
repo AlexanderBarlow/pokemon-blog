@@ -1,103 +1,142 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useEffect } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/Card";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [cards, setCards] = useState([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+useEffect(() => {
+  async function fetchCards() {
+    const rarityType = "Rare Shiny GX";
+    const query = `rarity:"${encodeURIComponent(rarityType)}"`; // ✅ Encode correctly
+
+    try {
+      const res = await fetch(
+        `https://api.pokemontcg.io/v2/cards?q=${query}&orderBy=-set.releaseDate&pageSize=10`,
+        {
+          method: "GET",
+          headers: {
+            "X-Api-Key": process.env.NEXT_PUBLIC_POKETCG_API_KEY,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch Pokémon cards");
+      }
+
+      const data = await res.json();
+      setCards(data.data || []); // ✅ Ensure data is set properly
+    } catch (error) {
+      console.error("Error fetching Pokémon cards:", error);
+      setCards([]);
+    }
+  }
+
+  fetchCards();
+}, []);
+
+
+  return (
+    <main className="flex flex-col items-center justify-center p-10">
+      {/* Hero Section */}
+      <section className="flex flex-col md:flex-row items-center justify-between w-full max-w-6xl">
+        {/* Announcement Text */}
+        <div className="md:w-1/2 text-center md:text-left">
+          <h1 className="text-5xl font-bold">Welcome to Pokémon Card Vault</h1>
+          <p className="text-lg mt-4 text-gray-500">
+            Browse, track, and collect your favorite Pokémon cards!
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Pokémon Card Carousel */}
+        <div className="relative">
+          <Carousel className="w-full max-w-lg h-[400px] bg-card p-4 rounded-lg shadow-xl border border-yellow-500">
+            <CarouselContent>
+              {cards.length > 0 ? (
+                cards.map((card, index) => (
+                  <CarouselItem
+                    key={card.id}
+                    className={`flex flex-col items-center transform rotate-y-[${
+                      index * 30
+                    }deg]`}
+                  >
+                    <img
+                      src={card.images.large}
+                      alt={card.name}
+                      className="rounded-lg shadow-lg mb-2 border-4 border-yellow-500"
+                    />
+                    <h3 className="text-lg font-bold text-card-foreground">
+                      {card.name}
+                    </h3>
+                    <p className="text-gray-400">
+                      Set: {card.set.name} ({card.set.releaseDate})
+                    </p>
+                  </CarouselItem>
+                ))
+              ) : (
+                <p className="text-gray-500 text-center w-full">
+                  Loading cards...
+                </p>
+              )}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+      </section>
+
+      {/* Card Showcase Section */}
+      <section className="w-full max-w-6xl mt-10">
+        <h2 className="text-3xl font-bold text-center mb-6">
+          Featured Pokémon Cards
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {cards.length > 0 ? (
+            cards.map((card) => (
+              <Card key={card.id} className="shadow-lg p-4">
+                <CardContent className="flex flex-col items-center">
+                  <img
+                    src={card.images.small}
+                    alt={card.name}
+                    className="rounded-lg mb-2"
+                  />
+                  <h3 className="text-lg bold text-black">{card.name}</h3>
+                  <p className="text-gray-500">Set: {card.set.name}</p>
+                  <p className="text-gray-500">Rarity: {card.rarity}</p>
+                  {card.tcgplayer?.prices?.normal?.market && (
+                    <p className="text-green-500 font-bold">
+                      Market Price: $
+                      {card.tcgplayer.prices.normal.market.toFixed(2)}
+                    </p>
+                  )}
+                  <a
+                    href={card.tcgplayer?.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 text-blue-500 hover:underline"
+                  >
+                    View on TCGPlayer
+                  </a>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center w-full col-span-4">
+              No cards found.
+            </p>
+          )}
+        </div>
+      </section>
+    </main>
   );
 }
